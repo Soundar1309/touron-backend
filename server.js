@@ -27,6 +27,10 @@ app.use("/api/bookingb2b", require("./routes/bookingb2bRoutes"))
 app.use("/api/bookingb2c", require("./routes/bookingb2cRoutes"))
 app.use("/api/todo", require("./routes/todoRoutes"))
 
-app.listen(process.env.PORT || 4000, () => {
+app.get('/', (req, res) => {
+  res.json('Hello backend!')
+})
+
+app.listen(process.env.PORT || 443, () => {
   console.log(`Server is running on port ${process.env.PORT}`);
 });
