@@ -31,6 +31,6 @@ app.get('/', (req, res) => {
   res.json('Hello backend!')
 })
 
-app.listen(process.env.PORT || 443, () => {
+app.listen(process.env.PORT || 4000, () => {
   console.log(`Server is running on port ${process.env.PORT}`);
 });
