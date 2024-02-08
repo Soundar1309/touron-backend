@@ -128,7 +128,6 @@ const sendOTP = async (req, res) => {
   try {
     const mobileNumber = req.body.mobileNumber;
     // const otp = Math.floor(100000 + Math.random() * 900000);
-    // console.log(`+91${mobileNumber}`, otp);
 
     client.verify.v2
       .services(verifySid)

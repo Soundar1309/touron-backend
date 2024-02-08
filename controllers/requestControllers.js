@@ -130,7 +130,7 @@ const addRequest = async (req, res) => {
     departureStation,
     dateItenary,
     tourPlan,
-    surveyId: `TO-${formattedDate}-${1705923 + allRequest.length + 2}`,
+    surveyId: `TO-${formattedDate}-${1705923 + allRequest?.data?.length + 1}`,
     category,
     planCategory,
     departureInDays,
@@ -655,5 +655,5 @@ module.exports = {
   getUpcomingTripByMobile,
   getCurrentTripbyMobile,
   getCancelledTripByMobile,
-  getCompletedTripByMobile
+  getCompletedTripByMobile,
 };
