@@ -1,5 +1,7 @@
 const Itinery = require("../models/itineryModel");
 const ItineryDetails = require("../models/itineryDetailsModel");
+const cloudinary = require("../config/cloudinary");
+
 
 // @desc    get itinery
 // @route   GET /api/itinery/
@@ -71,6 +73,22 @@ const addItinery = async (req, res) => {
     category,
   } = req.body;
 
+  const imageResult1 = await cloudinary.uploader.upload(req.body.image1, {
+    folder: "uploads",
+  });
+  const imageResult2 = await cloudinary.uploader.upload(req.body.image2, {
+    folder: "uploads",
+  });
+  const imageResult3 = await cloudinary.uploader.upload(req.body.image3, {
+    folder: "uploads",
+  });
+  const imageResult4 = await cloudinary.uploader.upload(req.body.image4, {
+    folder: "uploads",
+  });
+  const imageResult5 = await cloudinary.uploader.upload(req.body.image5, {
+    folder: "uploads",
+  });
+
   const itineryId = await ItineryDetails.find({ country });
 
   const itinery = await Itinery.create({
@@ -82,6 +100,26 @@ const addItinery = async (req, res) => {
     priceRangeStart,
     priceRangeEnd,
     category,
+    image1: {
+      public_id: imageResult1.public_id,
+      url: imageResult1.secure_url,
+    },
+    image2: {
+      public_id: imageResult2.public_id,
+      url: imageResult2.secure_url,
+    },
+    image3: {
+      public_id: imageResult3.public_id,
+      url: imageResult3.secure_url,
+    },
+    image4: {
+      public_id: imageResult4.public_id,
+      url: imageResult4.secure_url,
+    },
+    image5: {
+      public_id: imageResult5.public_id,
+      url: imageResult5.secure_url,
+    },
   });
   await itinery.save();
   res.status(201).json(itinery);
@@ -113,6 +151,61 @@ const updateItinery = async (req, res) => {
     itinery.priceRangeStart = priceRangeStart;
     itinery.priceRangeEnd = priceRangeEnd;
     itinery.category = category;
+    if (req.body.image1) {
+      const imageResult = await cloudinary.uploader.upload(req.body.image1, {
+        folder: "uploads",
+      });
+      itinery.image1 = {
+        public_id: imageResult.public_id,
+        url: imageResult.secure_url,
+      };
+    } else {
+      itinery.image1 = itinery.image1;
+    }
+    if (req.body.image2) {
+      const imageResult = await cloudinary.uploader.upload(req.body.image2, {
+        folder: "uploads",
+      });
+      itinery.image2 = {
+        public_id: imageResult.public_id,
+        url: imageResult.secure_url,
+      };
+    } else {
+      itinery.image2 = itinery.image2;
+    }
+    if (req.body.image3) {
+      const imageResult = await cloudinary.uploader.upload(req.body.image3, {
+        folder: "uploads",
+      });
+      itinery.image3 = {
+        public_id: imageResult.public_id,
+        url: imageResult.secure_url,
+      };
+    } else {
+      itinery.image3 = itinery.image3;
+    }
+    if (req.body.image4) {
+      const imageResult = await cloudinary.uploader.upload(req.body.image4, {
+        folder: "uploads",
+      });
+      itinery.image4 = {
+        public_id: imageResult.public_id,
+        url: imageResult.secure_url,
+      };
+    } else {
+      itinery.image4 = itinery.image4;
+    }
+    if (req.body.image5) {
+      const imageResult = await cloudinary.uploader.upload(req.body.image5, {
+        folder: "uploads",
+      });
+      itinery.image5 = {
+        public_id: imageResult.public_id,
+        url: imageResult.secure_url,
+      };
+    } else {
+      itinery.image5 = itinery.image5;
+    }
     await itinery.save();
     res.status(201).json(itinery);
   } catch (err) {
