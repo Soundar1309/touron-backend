@@ -1,5 +1,7 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/loginModel");
+var https = require("follow-redirects").https;
+var fs = require("fs");
 
 const accountSid = process.env.ACCOUNTSID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
@@ -124,51 +126,121 @@ const loginUser = async (req, res) => {
 // @desc    send otp user
 // @route   POST /api/login/send-otp
 // @access  private
-const sendOTP = async (req, res) => {
+const sendOTP = async (request, response) => {
   try {
-    const mobileNumber = req.body.mobileNumber;
-    // const otp = Math.floor(100000 + Math.random() * 900000);
+    const mobileNumber = request.body.mobileNumber;
 
-    client.verify.v2
-      .services(verifySid)
-      .verifications.create({ to: `+91${mobileNumber}`, channel: "sms" })
-      .then((verification) => {
-        console.log(verification.status);
-        res.json({
+    var options = {
+      method: "GET",
+      hostname: "2factor.in",
+      path: `/API/V1/8697a4f2-e821-11ea-9fa5-0200cd936042/SMS/+91${mobileNumber}/AUTOGEN/OTP1`,
+      headers: {},
+      maxRedirects: 20,
+    };
+
+    var req = https.request(options, function (res) {
+      var chunks = [];
+
+      res.on("data", function (chunk) {
+        chunks.push(chunk);
+      });
+
+      res.on("end", function (chunk) {
+        var body = Buffer.concat(chunks);
+        console.log(body.toString());
+        response.json({
           success: true,
           message: "OTP sent successfully",
-          otp: verification.status,
         });
       });
+
+      res.on("error", function (error) {
+        console.error(error);
+      });
+    });
+
+    req.end();
+
+    // const otp = Math.floor(100000 + Math.random() * 900000);
+
+    // client.verify.v2
+    //   .services(verifySid)
+    //   .verifications.create({ to: `+91${mobileNumber}`, channel: "sms" })
+    //   .then((verification) => {
+    //     console.log(verification.status);
+    //     res.json({
+    //       success: true,
+    //       message: "OTP sent successfully",
+    //       otp: verification.status,
+    //     });
+    //   });
     // .then(() => {
     //
     // });
   } catch (error) {
     console.error("Error sending OTP:", error);
-    res.status(500).json({ success: false, message: "Failed to send OTP." });
+    response
+      .status(500)
+      .json({ success: false, message: "Failed to send OTP." });
   }
 };
 
 // @desc    verify otp user
 // @route   POST /api/login/verify-otp
 // @access  private
-const verifyOTP = async (req, res) => {
-  const { otp, mobileNumber } = req.body;
+const verifyOTP = async (request, response) => {
+  const { otp, mobileNumber } = request.body;
   console.log(otp);
-  client.verify.v2
-    .services(verifySid)
-    .verificationChecks.create({
-      to: `+91${mobileNumber}`,
-      code: otp,
-    })
-    .then((verification_check) => {
-      res.json({
-        success: true,
-        message: "OTP verified",
-        otp: otp,
-      });
-      console.log(verification_check.status);
+
+  var options = {
+    method: "GET",
+    hostname: "2factor.in",
+    path: `/API/V1/8697a4f2-e821-11ea-9fa5-0200cd936042/SMS/VERIFY3/91${mobileNumber}/${otp}`,
+    headers: {},
+    maxRedirects: 20,
+  };
+
+  var req = https.request(options, function (res) {
+    var chunks = [];
+
+    res.on("data", function (chunk) {
+      chunks.push(chunk);
     });
+
+    res.on("end", function (chunk) {
+      var body = Buffer.concat(chunks);
+      console.log(body.toString());
+      const body1 = JSON.parse(body);
+      if (body1.Details === "OTP Matched") {
+        response.json({
+          success: true,
+          message: "OTP verified",
+          otp: otp,
+        });
+      }
+    });
+
+    res.on("error", function (error) {
+      console.error(error);
+    });
+  });
+
+  req.end();
+
+  // client.verify.v2
+  //   .services(verifySid)
+  //   .verificationChecks.create({
+  //     to: `+91${mobileNumber}`,
+  //     code: otp,
+  //   })
+  //   .then((verification_check) => {
+  //     res.json({
+  //       success: true,
+  //       message: "OTP verified",
+  //       otp: otp,
+  //     });
+  //     console.log(verification_check.status);
+  //   });
   // .then(() => readline.close());
 };
 
