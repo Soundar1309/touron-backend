@@ -58,7 +58,10 @@ const loginUser = async (req, res) => {
   // Checking for existing user
   const user = await User.findOne({ mobileNumber });
   if (user) {
-    if (user.mobileNumber == "9047514717") {
+    if (
+      user.mobileNumber == "9047514717" ||
+      user.mobileNumber == "9123571239"
+    ) {
       res.status(201).json({
         _id: user.id,
         username: user.username,
@@ -93,7 +96,10 @@ const loginUser = async (req, res) => {
         email: email,
       });
       if (user) {
-        if (user.mobileNumber == "9047514717") {
+        if (
+          user.mobileNumber == "9047514717" ||
+          user.mobileNumber == "9123571239"
+        ) {
           res.status(201).json({
             _id: user.id,
             username: user.userName,
