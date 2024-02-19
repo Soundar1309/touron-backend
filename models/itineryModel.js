@@ -2,9 +2,17 @@ const mongoose = require("mongoose");
 
 const daySchema = new mongoose.Schema({
   morning: { type: String },
+  morningLat: { type: String },
+  morningLng: { type: String },
   afternoon: { type: String },
+  afternoonLat: { type: String },
+  afternoonLng: { type: String },
   evening: { type: String },
+  eveningLat: { type: String },
+  eveningLng: { type: String },
   night: { type: String },
+  nightLat: { type: String },
+  nightLng: { type: String },
 });
 
 // Main schema

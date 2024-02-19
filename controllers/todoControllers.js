@@ -126,6 +126,20 @@ const updateCompleted = async (req, res) => {
   }
 };
 
+// @desc    delete todo
+// @route   POST /api/todo/delete
+// @access  private
+const deleteTodo = async (req, res) => {
+  try {
+    const { id } = req.body;
+    const todoItem = await Todo.findByIdAndDelete(id);
+    res.status(200).json("Todo deleted successfully");
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Server Error" });
+  }
+};
+
 module.exports = {
   getTodoToday,
   getTodoRemaining,
@@ -134,4 +148,5 @@ module.exports = {
   addTodo,
   updateCompleted,
   updateTodo,
+  deleteTodo,
 };

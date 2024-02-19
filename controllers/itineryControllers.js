@@ -2,7 +2,6 @@ const Itinery = require("../models/itineryModel");
 const ItineryDetails = require("../models/itineryDetailsModel");
 const cloudinary = require("../config/cloudinary");
 
-
 // @desc    get itinery
 // @route   GET /api/itinery/
 // @access  public
@@ -49,12 +48,16 @@ const getItineryByCountry = async (req, res) => {
 // @route   GET /api/itinery/:id
 // @access  public
 const getItinerybyID = async (req, res) => {
-  const itinery = await Itinery.findById(req.params.id);
-  if (itinery) {
-    res.json(itinery);
-  } else {
-    res.status(404);
-    throw new Error("Itinery not found");
+  try {
+    const itinerary = await Itinery.findById(req.params.id);
+    if (itinerary) {
+      res.json(itinerary);
+    } else {
+      res.status(404).json({ message: "Itinerary not found" });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server Error" });
   }
 };
 
@@ -62,67 +65,68 @@ const getItinerybyID = async (req, res) => {
 // @route   POST /api/itinery/additinery
 // @access  private
 const addItinery = async (req, res) => {
-  const {
-    itineryTitle,
-    country,
-    cityname,
-    noOfDays,
-    days,
-    priceRangeStart,
-    priceRangeEnd,
-    category,
-  } = req.body;
+  try {
+    const {
+      itineryTitle,
+      country,
+      cityname,
+      noOfDays,
+      days,
+      priceRangeStart,
+      priceRangeEnd,
+      category,
+    } = req.body;
 
-  const imageResult1 = await cloudinary.uploader.upload(req.body.image1, {
-    folder: "uploads",
-  });
-  const imageResult2 = await cloudinary.uploader.upload(req.body.image2, {
-    folder: "uploads",
-  });
-  const imageResult3 = await cloudinary.uploader.upload(req.body.image3, {
-    folder: "uploads",
-  });
-  const imageResult4 = await cloudinary.uploader.upload(req.body.image4, {
-    folder: "uploads",
-  });
-  const imageResult5 = await cloudinary.uploader.upload(req.body.image5, {
-    folder: "uploads",
-  });
+    const imageResults = await Promise.all([
+      cloudinary.uploader.upload(req.body.image1, { folder: "uploads" }),
+      cloudinary.uploader.upload(req.body.image2, { folder: "uploads" }),
+      cloudinary.uploader.upload(req.body.image3, { folder: "uploads" }),
+      cloudinary.uploader.upload(req.body.image4, { folder: "uploads" }),
+      cloudinary.uploader.upload(req.body.image5, { folder: "uploads" }),
+    ]);
 
-  const itineryId = await ItineryDetails.find({ country });
+    const itineryId = await ItineryDetails.find({ country });
 
-  const itinery = await Itinery.create({
-    itineryTitle,
-    country: itineryId[0]._id,
-    cityname,
-    noOfDays,
-    days,
-    priceRangeStart,
-    priceRangeEnd,
-    category,
-    image1: {
-      public_id: imageResult1.public_id,
-      url: imageResult1.secure_url,
-    },
-    image2: {
-      public_id: imageResult2.public_id,
-      url: imageResult2.secure_url,
-    },
-    image3: {
-      public_id: imageResult3.public_id,
-      url: imageResult3.secure_url,
-    },
-    image4: {
-      public_id: imageResult4.public_id,
-      url: imageResult4.secure_url,
-    },
-    image5: {
-      public_id: imageResult5.public_id,
-      url: imageResult5.secure_url,
-    },
-  });
-  await itinery.save();
-  res.status(201).json(itinery);
+    if (itineryId && itineryId.length > 0) {
+      const itinery = await Itinery.create({
+        itineryTitle,
+        country: itineryId[0]._id,
+        cityname,
+        noOfDays,
+        days,
+        priceRangeStart,
+        priceRangeEnd,
+        category,
+        image1: {
+          public_id: imageResults[0].public_id,
+          url: imageResults[0].secure_url,
+        },
+        image2: {
+          public_id: imageResults[1].public_id,
+          url: imageResults[1].secure_url,
+        },
+        image3: {
+          public_id: imageResults[2].public_id,
+          url: imageResults[2].secure_url,
+        },
+        image4: {
+          public_id: imageResults[3].public_id,
+          url: imageResults[3].secure_url,
+        },
+        image5: {
+          public_id: imageResults[4].public_id,
+          url: imageResults[4].secure_url,
+        },
+      });
+      await itinery.save();
+      res.status(201).json(itinery);
+    } else {
+      res.status(404).json({ message: "Country not found" });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server Error" });
+  }
 };
 
 // @desc    update itinery
