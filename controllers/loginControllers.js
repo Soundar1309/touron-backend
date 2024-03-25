@@ -60,7 +60,8 @@ const loginUser = async (req, res) => {
   if (user) {
     if (
       user.mobileNumber == "9047514717" ||
-      user.mobileNumber == "9123571239"
+      user.mobileNumber == "9123571239" ||
+      user.mobileNumber == "8667801206"
     ) {
       res.status(201).json({
         _id: user.id,
