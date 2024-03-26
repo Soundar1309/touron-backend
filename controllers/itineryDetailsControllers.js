@@ -61,12 +61,12 @@ const addItineryDetails = async (req, res) => {
 // @access  private
 const updateItineryDetails = async (req, res) => {
   try {
-    const { country, overview, inclusion, review, faq } = req.body;
+    const { country, overview, inclusion,weather, review, faq } = req.body;
     const itinery = await ItineryDetails.findOneAndUpdate({ country });
     itinery.country = country;
     itinery.overview = overview;
     itinery.inclusion = inclusion;
-    weather.weather = weather;
+    itinery.weather = weather;
     itinery.review = review;
     itinery.faq = faq;
     await itinery.save();
