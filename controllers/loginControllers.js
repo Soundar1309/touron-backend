@@ -2,11 +2,13 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/loginModel");
 var https = require("follow-redirects").https;
 var fs = require("fs");
+const admin = require("firebase-admin");
 
-const accountSid = process.env.ACCOUNTSID;
-const authToken = process.env.TWILIO_AUTH_TOKEN;
-const verifySid = process.env.VERIFYSID;
-const client = require("twilio")(accountSid, authToken);
+const serviceAccount = require("../serviceAccountKey.json");
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+});
 
 // @desc    get users
 // @route   GET /api/login/getuser
@@ -50,6 +52,7 @@ const updateUserById = async (req, res) => {
 // @access  public
 const loginUser = async (req, res) => {
   const { username, mobileNumber, email } = req.body;
+
   if (!mobileNumber) {
     res.status(400);
     throw new Error("Please add mobile number");
@@ -58,34 +61,10 @@ const loginUser = async (req, res) => {
   // Checking for existing user
   const user = await User.findOne({ mobileNumber });
   if (user) {
-    if (
-      user.mobileNumber == "9123571239" ||
-      user.mobileNumber == "8667801206"
-    ) {
-      res.status(201).json({
-        _id: user.id,
-        username: user.username,
-        mobileNumber: user.mobileNumber,
-        email: user.email,
-        token: generateToken(user._id),
-        admin: user.mobileNumber,
-        message: "old user",
-      });
-    } else {
-      res.status(201).json({
-        _id: user.id,
-        username: user.username,
-        mobileNumber: user.mobileNumber,
-        email: user.email,
-        token: generateToken(user._id),
-        admin: "no",
-        message: "old user",
-      });
-    }
-    req.user = user;
+    res.json(GenerateUserInfo(user), 200);
   } else {
     if (!username || username === "") {
-      res.status(201).json({
+      res.status(500).json({
         message: "add user",
       });
     } else {
@@ -95,159 +74,66 @@ const loginUser = async (req, res) => {
         mobileNumber: mobileNumber,
         email: email,
       });
+
       if (user) {
-        if (
-          user.mobileNumber == "9123571239" ||
-          user.mobileNumber == "8667801206"
-        ) {
-          res.status(201).json({
-            _id: user.id,
-            username: user.userName,
-            mobileNumber: user.mobileNumber,
-            email: user.email,
-            token: generateToken(user._id),
-            admin: user.mobileNumber,
-            message: "new user",
-          });
-        } else {
-          res.status(201).json({
-            _id: user.id,
-            username: user.username,
-            mobileNumber: user.mobileNumber,
-            email: user.email,
-            token: generateToken(user._id),
-            admin: "no",
-            message: "old user",
-          });
-        }
-        req.user = user;
+        res.json(GenerateUserInfo(user), 201);
       } else {
-        res.status(400);
+        res.status(500);
         throw new Error("Invalid user data");
       }
     }
   }
 };
 
-// @desc    send otp user
-// @route   POST /api/login/send-otp
-// @access  private
-const sendOTP = async (request, response) => {
-  try {
-    const mobileNumber = request.body.mobileNumber;
-
-    var options = {
-      method: "GET",
-      hostname: "2factor.in",
-      path: `/API/V1/8697a4f2-e821-11ea-9fa5-0200cd936042/SMS/+91${mobileNumber}/AUTOGEN/OTP1`,
-      headers: {},
-      maxRedirects: 20,
-    };
-
-    var req = https.request(options, function (res) {
-      var chunks = [];
-
-      res.on("data", function (chunk) {
-        chunks.push(chunk);
-      });
-
-      res.on("end", function (chunk) {
-        var body = Buffer.concat(chunks);
-        console.log(body.toString());
-        response.json({
-          success: true,
-          message: "OTP sent successfully",
-        });
-      });
-
-      res.on("error", function (error) {
-        console.error(error);
-      });
-    });
-
-    req.end();
-
-    // const otp = Math.floor(100000 + Math.random() * 900000);
-
-    // client.verify.v2
-    //   .services(verifySid)
-    //   .verifications.create({ to: `+91${mobileNumber}`, channel: "sms" })
-    //   .then((verification) => {
-    //     console.log(verification.status);
-    //     res.json({
-    //       success: true,
-    //       message: "OTP sent successfully",
-    //       otp: verification.status,
-    //     });
-    //   });
-    // .then(() => {
-    //
-    // });
-  } catch (error) {
-    console.error("Error sending OTP:", error);
-    response
-      .status(500)
-      .json({ success: false, message: "Failed to send OTP." });
-  }
+const GenerateUserInfo = (user) => {
+  return (
+    {
+      _id: user.id,
+      username: user.username,
+      mobileNumber: user.mobileNumber,
+      email: user.email,
+      token: generateToken(user._id),
+      admin:
+        user.mobileNumber == "+918667801206" ||
+        user.mobileNumber == "+919123571239" ||
+        user.mobileNumber == "8667801206" ||
+        user.mobileNumber == "9123571239"
+          ? user.mobileNumber
+          : "",
+    } || {}
+  );
 };
 
-// @desc    verify otp user
-// @route   POST /api/login/verify-otp
-// @access  private
-const verifyOTP = async (request, response) => {
-  const { otp, mobileNumber } = request.body;
-  console.log(otp);
+// @desc    Verify Token
+// @route   GET /api/login/getuser
+// @access  public
 
-  var options = {
-    method: "GET",
-    hostname: "2factor.in",
-    path: `/API/V1/8697a4f2-e821-11ea-9fa5-0200cd936042/SMS/VERIFY3/91${mobileNumber}/${otp}`,
-    headers: {},
-    maxRedirects: 20,
-  };
+const verifyToken = async (req, res) => {
+  const { id_token, mobileNumber } = req.body;
+  try {
+    const decodedToken = await admin.auth().verifyIdToken(id_token);
 
-  var req = https.request(options, function (res) {
-    var chunks = [];
+    if (!decodedToken || decodedToken?.phone_number !== mobileNumber) {
+      res.json({ message: `Invalid Token` }, 500);
+    }
 
-    res.on("data", function (chunk) {
-      chunks.push(chunk);
-    });
+    const user = await User.findOne({ mobileNumber: mobileNumber });
 
-    res.on("end", function (chunk) {
-      var body = Buffer.concat(chunks);
-      console.log(body.toString());
-      const body1 = JSON.parse(body);
-      if (body1.Details === "OTP Matched") {
-        response.json({
-          success: true,
-          message: "OTP verified",
-          otp: otp,
-        });
-      }
-    });
-
-    res.on("error", function (error) {
-      console.error(error);
-    });
-  });
-
-  req.end();
-
-  // client.verify.v2
-  //   .services(verifySid)
-  //   .verificationChecks.create({
-  //     to: `+91${mobileNumber}`,
-  //     code: otp,
-  //   })
-  //   .then((verification_check) => {
-  //     res.json({
-  //       success: true,
-  //       message: "OTP verified",
-  //       otp: otp,
-  //     });
-  //     console.log(verification_check.status);
-  //   });
-  // .then(() => readline.close());
+    if (user) {
+      res.json({
+        message: "User Exists and Verified Successfully",
+        existingUser: true,
+        ...GenerateUserInfo(user),
+      });
+    } else {
+      res.json({
+        message: "User Does Not Exists and Verified Successfully",
+        existingUser: false,
+      });
+    }
+  } catch (error) {
+    res.json({ message: `Error verifying ID token: ${error}` }, 500);
+  }
 };
 
 // @desc    delete user
@@ -274,8 +160,7 @@ module.exports = {
   getUser,
   getUserById,
   loginUser,
-  sendOTP,
-  verifyOTP,
+  verifyToken,
   deleteUser,
   updateUserById,
 };
