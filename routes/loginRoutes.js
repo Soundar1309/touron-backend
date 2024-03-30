@@ -6,6 +6,7 @@ const {
   loginUser,
   deleteUser,
   verifyToken,
+  verifyEmailToken,
   updateUserById,
 } = require("../controllers/loginControllers");
 

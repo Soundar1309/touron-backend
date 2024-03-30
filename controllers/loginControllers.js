@@ -36,8 +36,7 @@ const getUserById = async (req, res) => {
 // @access  public
 const updateUserById = async (req, res) => {
   const { username, mobileNumber, email } = req.body;
-  console.log(req.body);
-  console.log(req.params.id);
+
   const user = await User.findById(req.params.id);
   user.username = username;
   user.mobileNumber = mobileNumber;
@@ -54,33 +53,51 @@ const loginUser = async (req, res) => {
   const { username, mobileNumber, email } = req.body;
 
   if (!mobileNumber) {
-    res.status(400);
+    res.status(500);
     throw new Error("Please add mobile number");
   }
 
+  if (!email) {
+    res.status(500);
+    throw new Error("Please add email");
+  }
+
   // Checking for existing user
-  const user = await User.findOne({ mobileNumber });
-  if (user) {
+  const user = await User.findOne({ $or: [{ mobileNumber }, { email }] });
+  if (user && user.mobileNumber == mobileNumber && user.email == email) {
     res.json(GenerateUserInfo(user), 200);
+  } else if (
+    user &&
+    (user.mobileNumber !== mobileNumber || user.email !== email)
+  ) {
+    res.status(500).json({
+      message: "Email already associated different mobile number.",
+    });
   } else {
     if (!username || username === "") {
       res.status(500).json({
-        message: "add user",
+        message: "Please enter your name",
       });
-    } else {
-      // Creating User
-      const user = await User.create({
-        username: username,
-        mobileNumber: mobileNumber,
-        email: email,
-      });
+    }
 
-      if (user) {
-        res.json(GenerateUserInfo(user), 201);
-      } else {
-        res.status(500);
-        throw new Error("Invalid user data");
-      }
+    if (!email || email === "") {
+      res.status(500).json({
+        message: "Please enter your email",
+      });
+    }
+
+    // Creating User
+    const user = await User.create({
+      username: username,
+      mobileNumber: mobileNumber,
+      email: email,
+    });
+
+    if (user) {
+      res.status(201).json(GenerateUserInfo(user));
+    } else {
+      res.status(500);
+      throw new Error("Invalid user data");
     }
   }
 };
@@ -109,30 +126,41 @@ const GenerateUserInfo = (user) => {
 // @access  public
 
 const verifyToken = async (req, res) => {
-  const { id_token, mobileNumber } = req.body;
+  const { id_token, mobileNumber, email } = req.body;
   try {
     const decodedToken = await admin.auth().verifyIdToken(id_token);
 
-    if (!decodedToken || decodedToken?.phone_number !== mobileNumber) {
-      res.json({ message: `Invalid Token` }, 500);
+    let user;
+    if (email) {
+      if (!decodedToken || decodedToken?.email !== email) {
+        res.status(500).json({ message: `Invalid Token` });
+      }
+
+      user = await User.findOne({ email: email });
     }
 
-    const user = await User.findOne({ mobileNumber: mobileNumber });
+    if (mobileNumber) {
+      if (!decodedToken || decodedToken?.phone_number !== mobileNumber) {
+        res.status(500).json({ message: `Invalid Token` });
+      }
+
+      user = await User.findOne({ mobileNumber: mobileNumber });
+    }
 
     if (user) {
-      res.json({
+      res.status(200).json({
         message: "User Exists and Verified Successfully",
         existingUser: true,
         ...GenerateUserInfo(user),
       });
     } else {
-      res.json({
+      res.status(200).json({
         message: "User Does Not Exists and Verified Successfully",
         existingUser: false,
       });
     }
   } catch (error) {
-    res.json({ message: `Error verifying ID token: ${error}` }, 500);
+    res.status(500).json({ message: `Error verifying ID token: ${error}` });
   }
 };
 
