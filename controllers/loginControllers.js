@@ -112,9 +112,7 @@ const GenerateUserInfo = (user) => {
       token: generateToken(user._id),
       admin:
         user.mobileNumber == "+918667801206" ||
-        user.mobileNumber == "+919123571239" ||
-        user.mobileNumber == "8667801206" ||
-        user.mobileNumber == "9123571239"
+        user.mobileNumber == "+919123571239"
           ? user.mobileNumber
           : "",
     } || {}
