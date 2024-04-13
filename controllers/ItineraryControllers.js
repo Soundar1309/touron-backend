@@ -1,0 +1,161 @@
+const ItineryDetails = require("../models/ItineraryModal");
+
+// @desc    get itinerydetails
+// @route   GET /api/itinerary/
+// @access  public
+const getItineraries = async (req, res) => {
+  const itinery = await ItineryDetails.find().select({ country: 1, title: 1, price: 1, destination: 1, duration: 1, hotel: 1, meals: 1, image: 1, description: 1, topHighlights: 1, });
+  res.json(itinery);
+};
+
+// @desc    get itinerydetails by id
+// @route   GET /api/itinerary/:id
+// @access  public
+const getItinerary = async (req, res) => {
+  const itinery = await ItineryDetails.findById(req.params.id);
+  if (itinery) {
+    res.json(itinery);
+  } else {
+    res.status(404);
+    throw new Error("Itinery not found");
+  }
+};
+
+// @desc    delete itinerydetails by id
+// @route   DELETE /api/itinerary/:id
+// @access  public
+const deleteItinerary = async (req, res) => {
+  try {
+    await ItineryDetails.findByIdAndDelete(req.params.id);
+    res.status(200).json({ message: "Itinerary deleted successfully" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// @desc    add itinerydetails
+// @route   GET /api/itinerary/add
+// @access  private
+const addItinerary = async (req, res) => {
+  const {
+    country,
+    title,
+    price,
+    destination,
+    duration,
+    hotel,
+    meals,
+    image,
+    description,
+    topHighlights,
+    tourPlanDescription,
+    included,
+    excluded,
+    days,
+  } = req.body;
+
+  const itinery = await ItineryDetails.create({
+    country,
+    title,
+    price,
+    destination,
+    duration,
+    hotel,
+    meals,
+    image,
+    description,
+    topHighlights,
+    tourPlanDescription,
+    included,
+    excluded,
+    days,
+  });
+  await itinery.save();
+  res.status(201).json(itinery);
+};
+
+// @desc    update itinerydetails
+// @route   PATCH /api/itinerary/:id
+// @access  private
+const updateItinerary = async (req, res) => {
+  try {
+    const {
+      country,
+      title,
+      price,
+      destination,
+      duration,
+      hotel,
+      meals,
+      image,
+      description,
+      topHighlights,
+      tourPlanDescription,
+      included,
+      excluded,
+      days,
+    } = req.body;
+    const itinerary = await ItineryDetails.findByIdAndUpdate(req.params.id, {
+      country,
+      title,
+      price,
+      destination,
+      duration,
+      hotel,
+      meals,
+      image,
+      description,
+      topHighlights,
+      tourPlanDescription,
+      included,
+      excluded,
+      days,
+    }, { new: true });
+    await itinerary.save();
+    res.status(200).json(itinerary);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// @desc    update faq
+// @route   PATCH /api/itinerary/:id/faq
+// @access  private
+const updateItineraryFaq = async (req, res) => {
+  try {
+    const {
+      faq
+    } = req.body;
+    const itinerary = await ItineryDetails.findByIdAndUpdate(req.params.id, { faq }, { new: true });
+    await itinerary.save();
+    res.status(200).json(itinerary);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// @desc    update review
+// @route   PATCH /api/itinerary/:id/review
+// @access  private
+const updateItineraryReview = async (req, res) => {
+  try {
+    const {
+      review
+    } = req.body;
+    const itinerary = await ItineryDetails.findByIdAndUpdate(req.params.id, { review }, { new: true });
+    await itinerary.save();
+    res.status(200).json(itinerary);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+module.exports = {
+  getItineraries,
+  getItinerary,
+  deleteItinerary,
+  addItinerary,
+  updateItinerary,
+  updateItineraryReview,
+  updateItineraryFaq
+};

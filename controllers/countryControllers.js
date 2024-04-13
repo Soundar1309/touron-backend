@@ -8,6 +8,14 @@ const getAllCountry = async (req, res) => {
   res.json(country);
 };
 
+// @desc    get all country name in ascending order autocomplete
+// @route   GET /api/country/
+// @access  public
+const getAllCountryAutocomplete = async (req, res) => {
+  const country = await Country.find().select({ countryName: 1, }).sort({ countryName: 1 });
+  res.json(country);
+};
+
 // @desc    get country by id
 // @route   GET /api/country/:id
 // @access  public
@@ -157,6 +165,7 @@ const deleteCountry = async (req, res) => {
 
 module.exports = {
   getAllCountry,
+  getAllCountryAutocomplete,
   getCountryById,
   getCountryByName,
   addCountry,
