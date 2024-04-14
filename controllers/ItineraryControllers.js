@@ -1,4 +1,5 @@
 const ItineryDetails = require("../models/ItineraryModal");
+const cloudinary = require("../config/cloudinary");
 
 // @desc    get itinerydetails
 // @route   GET /api/itinerary/
@@ -37,41 +38,52 @@ const deleteItinerary = async (req, res) => {
 // @route   GET /api/itinerary/add
 // @access  private
 const addItinerary = async (req, res) => {
-  const {
-    country,
-    title,
-    price,
-    destination,
-    duration,
-    hotel,
-    meals,
-    image,
-    description,
-    topHighlights,
-    tourPlanDescription,
-    included,
-    excluded,
-    days,
-  } = req.body;
+  try {
+    const {
+      country,
+      title,
+      price,
+      destination,
+      duration,
+      hotel,
+      meals,
+      image,
+      description,
+      topHighlights,
+      tourPlanDescription,
+      included,
+      excluded,
+      days,
+    } = req.body;
 
-  const itinery = await ItineryDetails.create({
-    country,
-    title,
-    price,
-    destination,
-    duration,
-    hotel,
-    meals,
-    image,
-    description,
-    topHighlights,
-    tourPlanDescription,
-    included,
-    excluded,
-    days,
-  });
-  await itinery.save();
-  res.status(201).json(itinery);
+    const imageResult = await cloudinary.uploader.upload(image, {
+      folder: "uploads",
+    });
+
+    const itinery = await ItineryDetails.create({
+      country,
+      title,
+      price,
+      destination,
+      duration,
+      hotel,
+      meals,
+      image: {
+        public_id: imageResult.public_id,
+        url: imageResult.secure_url,
+      },
+      description,
+      topHighlights,
+      tourPlanDescription,
+      included,
+      excluded,
+      days,
+    });
+    await itinery.save();
+    res.status(201).json({ ...itinery._doc, message: "Created Successfully" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 };
 
 // @desc    update itinerydetails
@@ -95,6 +107,20 @@ const updateItinerary = async (req, res) => {
       excluded,
       days,
     } = req.body;
+
+    let imageData;
+    if (typeof image === "string") {
+      const imageResult = await cloudinary.uploader.upload(image, {
+        folder: "uploads",
+      });
+      imageData = {
+        public_id: imageResult.public_id,
+        url: imageResult.secure_url,
+      }
+    } else {
+      imageData = image;
+    }
+
     const itinerary = await ItineryDetails.findByIdAndUpdate(req.params.id, {
       country,
       title,
@@ -103,7 +129,7 @@ const updateItinerary = async (req, res) => {
       duration,
       hotel,
       meals,
-      image,
+      image: imageData,
       description,
       topHighlights,
       tourPlanDescription,
@@ -112,9 +138,9 @@ const updateItinerary = async (req, res) => {
       days,
     }, { new: true });
     await itinerary.save();
-    res.status(200).json(itinerary);
+    res.status(200).json({ ...itinerary._doc, message: "Updated Successfully" });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ message: err.message });
   }
 };
 

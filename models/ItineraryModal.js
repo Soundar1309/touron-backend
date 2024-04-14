@@ -39,7 +39,14 @@ const ItineraryDetailSchema = mongoose.Schema(
       type: String,
     },
     image: {
-      type: String,
+      public_id: {
+        type: String,
+        required: true
+      },
+      url: {
+        type: String,
+        required: true
+      }
     },
     description: {
       type: String,
