@@ -113,6 +113,16 @@ const GenerateUserInfo = (user) => {
       mobileNumber: user.mobileNumber,
       email: user.email,
       token: generateToken(user._id),
+
+      admin:
+        user.mobileNumber == "+918667801206" ||
+          user.mobileNumber == "+919123571239" ||
+          user.mobileNumber == "+917708924652" ||
+          user.mobileNumber == "8667801206" ||
+          user.mobileNumber == "7708924652" ||
+          user.mobileNumber == "9123571239"
+          ? user.mobileNumber
+          : "",
     }
   );
 };
