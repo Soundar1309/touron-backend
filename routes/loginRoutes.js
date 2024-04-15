@@ -6,6 +6,7 @@ const {
   loginUser,
   deleteUser,
   verifyToken,
+  verifyAdminToken,
   updateUserById,
 } = require("../controllers/loginControllers");
 
@@ -14,6 +15,7 @@ router.get("/:id", getUserById);
 router.post("/", loginUser);
 router.post("/update/:id", updateUserById);
 router.post("/verify-token", verifyToken);
+router.post("/verify-admin-token", verifyAdminToken);
 router.post("/delete", deleteUser);
 
 module.exports = router;

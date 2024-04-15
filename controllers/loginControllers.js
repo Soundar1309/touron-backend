@@ -1,7 +1,8 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/loginModel");
-var https = require("follow-redirects").https;
-var fs = require("fs");
+const Employee = require("../models/employeeModel");
+const https = require("follow-redirects").https;
+const fs = require("fs");
 const admin = require("firebase-admin");
 
 const serviceAccount = require("../serviceAccountKey.json");
@@ -112,6 +113,7 @@ const GenerateUserInfo = (user) => {
       mobileNumber: user.mobileNumber,
       email: user.email,
       token: generateToken(user._id),
+
       admin:
         user.mobileNumber == "+918667801206" ||
           user.mobileNumber == "+919123571239" ||
@@ -126,9 +128,8 @@ const GenerateUserInfo = (user) => {
 };
 
 // @desc    Verify Token
-// @route   GET /api/login/getuser
+// @route   GET /api/login/verify-token
 // @access  public
-
 const verifyToken = async (req, res) => {
   const { id_token, mobileNumber, email } = req.body;
   try {
@@ -168,6 +169,40 @@ const verifyToken = async (req, res) => {
   }
 };
 
+// @desc    Verify Admin Token
+// @route   GET /api/login/verify-admin-token
+// @access  public
+const verifyAdminToken = async (req, res) => {
+  const { id_token, mobileNumber } = req.body;
+  try {
+    const decodedToken = await admin.auth().verifyIdToken(id_token);
+
+    let user;
+
+    if (mobileNumber) {
+      if (!decodedToken || decodedToken?.phone_number !== mobileNumber) {
+        res.status(500).json({ message: `Invalid Token` });
+      }
+
+      user = await Employee.findOne({ mobileNumber: mobileNumber });
+    }
+
+    if (user) {
+      res.status(200).json({
+        message: "Employee Verified Successfully",
+        designation: user.designation,
+        name: user.name,
+        role: user.role,
+        ...GenerateUserInfo(user),
+      });
+    } else {
+      res.status(500).json({ message: "Employee Does Not Exists", });
+    }
+  } catch (error) {
+    res.status(500).json({ message: `Error verifying ID token: ${error}` });
+  }
+};
+
 // @desc    delete user
 // @route   POST /api/login/delete
 // @access  private
@@ -193,6 +228,7 @@ module.exports = {
   getUserById,
   loginUser,
   verifyToken,
+  verifyAdminToken,
   deleteUser,
   updateUserById,
 };
