@@ -56,13 +56,13 @@ const addTestimonials = async (req, res) => {
 // @access  private
 const updateTestimonials = async (req, res) => {
   try {
-    const { name, comment, tourPlace, field } = req.body;
+    const { name, comment, tourPlace, field, image } = req.body;
     const testimonials = await Testimonials.findById(req.params.id);
     testimonials.name = name;
     testimonials.comment = comment;
     testimonials.tourPlace = tourPlace;
     testimonials.field = field;
-    if (req.body.image) {
+    if (typeof image === "string") {
       const imageResult = await cloudinary.uploader.upload(req.body.image, {
         folder: "uploads",
       });
