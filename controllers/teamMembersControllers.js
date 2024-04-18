@@ -32,7 +32,7 @@ const addTeam = async (req, res) => {
   try {
     const { name, designation } = req.body;
     const imageResult = await cloudinary.uploader.upload(req.body.image, {
-      folder: "uploads",
+      folder: "teams",
     });
     const team = new Team({
       name,
@@ -60,7 +60,7 @@ const updateTeam = async (req, res) => {
     team.designation = designation;
     if (req.body.image) {
       const imageResult = await cloudinary.uploader.upload(req.body.image, {
-        folder: "uploads",
+        folder: "teams",
       });
       team.image = {
         public_id: imageResult.public_id,

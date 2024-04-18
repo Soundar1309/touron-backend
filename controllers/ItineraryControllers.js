@@ -57,7 +57,7 @@ const addItinerary = async (req, res) => {
     } = req.body;
 
     const imageResult = await cloudinary.uploader.upload(image, {
-      folder: "uploads",
+      folder: "itineraries",
     });
 
     const itinery = await ItineryDetails.create({
@@ -111,7 +111,7 @@ const updateItinerary = async (req, res) => {
     let imageData;
     if (typeof image === "string") {
       const imageResult = await cloudinary.uploader.upload(image, {
-        folder: "uploads",
+        folder: "itineraries",
       });
       imageData = {
         public_id: imageResult.public_id,
