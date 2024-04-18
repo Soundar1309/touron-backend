@@ -1,22 +1,22 @@
 const mongoose = require("mongoose");
 
+const sectionSchema = new mongoose.Schema({
+  heading: { type: String },
+  image: { type: String },
+  content: { type: String },
+});
+
 const blogSchema = mongoose.Schema(
   {
     countryName: String,
-    cityName: [String],
+    cities: [String],
     keywords: [String],
-    blogTitle: String,
-    imageSrc: String,
+    title: String,
+    image: String,
     content: String,
-    subHeading1: String,
-    imageSrc1: String,
-    content1: String,
-    subHeading2: String,
-    imageSrc2: String,
-    content2: String,
-    subHeading3: String,
-    imageSrc3: String,
-    content3: String,
+    sections: {
+      type: [sectionSchema],
+    },
     categories: [String],
     comments: [String]
   },

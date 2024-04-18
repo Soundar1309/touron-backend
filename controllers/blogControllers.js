@@ -43,40 +43,24 @@ const getBlogbyID = async (req, res) => {
 const addBlog = async (req, res) => {
   const {
     countryName,
-    cityName,
+    cities,
     keywords,
-    blogTitle,
-    imageSrc,
+    title,
+    image,
     content,
-    subHeading1,
-    imageSrc1,
-    content1,
-    subHeading2,
-    imageSrc2,
-    content2,
-    subHeading3,
-    imageSrc3,
-    content3,
+    sections,
     categories,
     comments
   } = req.body;
 
   const blog = await Blog.create({
     countryName,
-    cityName,
+    cities,
     keywords,
-    blogTitle,
-    imageSrc,
+    title,
+    image,
     content,
-    subHeading1,
-    imageSrc1,
-    content1,
-    subHeading2,
-    imageSrc2,
-    content2,
-    subHeading3,
-    imageSrc3,
-    content3,
+    sections,
     categories,
     comments
   });
@@ -91,43 +75,27 @@ const updateBlog = async (req, res) => {
   try {
     const {
       countryName,
-      cityName,
+      cities,
       keywords,
-      blogTitle,
-      imageSrc,
+      title,
+      image,
       content,
-      subHeading1,
-      imageSrc1,
-      content1,
-      subHeading2,
-      imageSrc2,
-      content2,
-      subHeading3,
-      imageSrc3,
-      content3,
+      sections,
       categories,
       comments
     } = req.body;
     const blog = await Blog.findById(req.params.id);
-      blog.countryName =countryName,
-      blog.cityName = cityName
-      blog.keywords = keywords
-      blog.blogTitle = blogTitle
-      blog.imageSrc = imageSrc
-      blog.content = content
-      blog.subHeading1 = subHeading1
-      blog.imageSrc1 = imageSrc1
-      blog.content1 = content1
-      blog.subHeading2 = subHeading2
-      blog.imageSrc2 = imageSrc2
-      blog.content2 = content2
-      blog.subHeading3 = subHeading3
-      blog.imageSrc3 = imageSrc3
-      blog.content3 = content3
-      blog.categories = categories
-      blog.comments = comments
+    blog.countryName = countryName;
+    blog.cityName = cities;
+    blog.keywords = keywords;
+    blog.title = title;
+    blog.image = image;
+    blog.content = content;
+    blog.sections = sections;
+    blog.categories = categories
+    blog.comments = comments
     await blog.save();
-    res.status(201).json(blog);
+    res.status(200).json(blog);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
