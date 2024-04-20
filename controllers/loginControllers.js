@@ -112,7 +112,7 @@ const GenerateUserInfo = (user) => {
       username: user.username,
       mobileNumber: user.mobileNumber,
       email: user.email,
-      token: generateToken(user._id),
+      token: generateToken(user),
       admin:
         user.mobileNumber == "+918667801206" ||
           user.mobileNumber == "+919123571239" ||
@@ -198,7 +198,7 @@ const verifyAdminToken = async (req, res) => {
       res.status(500).json({ message: "Employee Does Not Exists", });
     }
   } catch (error) {
-    res.status(500).json({ message: `Error verifying ID token: ${error}` });
+    res.status(500).json({ message: `Error verifying Admin ID token: ${error}` });
   }
 };
 
@@ -216,8 +216,8 @@ const deleteUser = async (req, res) => {
 };
 
 // Generate JWT
-const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
+const generateToken = (user) => {
+  return jwt.sign({ id: user._id, role: user?.role || "user" }, process.env.JWT_SECRET, {
     expiresIn: "2d",
   });
 };

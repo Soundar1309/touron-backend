@@ -6,11 +6,11 @@ const todoSchema = mongoose.Schema(
       type: String,
       required: true,
     },
-    date: {
-      type: String,
+    dueDate: {
+      type: Date,
     },
-    done: {
-      type: Boolean,
+    status: {
+      type: String,
       default: false,
     },
     user: {
@@ -24,4 +24,4 @@ const todoSchema = mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model("Todolist", todoSchema);
+module.exports = mongoose.model("Todo", todoSchema);

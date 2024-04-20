@@ -1,63 +1,14 @@
 const Todo = require("../models/todoModel");
 
-// @desc    get all todo in ascending order  created today
-// @route   GET /api/todo/today
+// @desc    get all todo
+// @route   GET /api/todo
 // @access  public
-const getTodoToday = async (req, res) => {
+const getAllTodo = async (req, res) => {
   try {
-    const currentDate = new Date().toISOString().split("T")[0];
-
-    const todos = await Todo.find({
-      user: req.user._id,
-      done: false,
-      createdAt: {
-        $gte: currentDate + "T00:00:00.000Z",
-        $lt: currentDate + "T23:59:59.999Z",
-      },
-    }).sort({ createdAt: 1 });
+    const todos = await Todo.find({ user: req.user?._id, }).sort({ createdAt: -1 });
 
     res.json(todos);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Internal Server Error" });
-  }
-};
-
-// @desc    get all todo in ascending order remaining
-// @route   GET /api/todo/remaining
-// @access  public
-const getTodoRemaining = async (req, res) => {
-  try {
-    const currentDate = new Date().toISOString().split("T")[0];
-
-    const todos = await Todo.find({
-      user: req.user._id,
-      createdAt: { $lt: currentDate + "T00:00:00.000Z" },
-      done: false,
-    }).sort({ createdAt: 1 });
-
-    res.json(todos);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Internal Server Error" });
-  }
-};
-
-// @desc    get todo by done
-// @route   GET /api/todo/done
-// @access  public
-const getTodoByDone = async (req, res) => {
-  try {
-    const currentDate = new Date().toISOString().split("T")[0];
-
-    const todos = await Todo.find({
-      user: req.user._id,
-      done: true,
-    }).sort({ createdAt: 1 });
-
-    res.json(todos);
-  } catch (error) {
-    console.error(error);
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
@@ -79,13 +30,12 @@ const getTodoByID = async (req, res) => {
 // @route   POST /api/todo/add
 // @access  private
 const addTodo = async (req, res) => {
-  const { todo, date } = req.body;
-
-  console.log(req.body);
-
+  const { todo, status, dueDate } = req.body;
+  console.log(todo, status, dueDate);
   const todoItem = await Todo.create({
     todo,
-    date,
+    dueDate,
+    status: status || "Pending",
     user: req.user._id,
   });
   await todoItem.save();
@@ -97,28 +47,11 @@ const addTodo = async (req, res) => {
 // @access  private
 const updateTodo = async (req, res) => {
   try {
-    const { todo, date, done } = req.body;
+    const { todo, dueDate, status } = req.body;
     const todoItem = await Todo.findById(req.params.id);
     todoItem.todo = todo;
-    todoItem.date = date;
-    todoItem.done = done;
-    await todoItem.save();
-    res.status(201).json(todoItem);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
-
-// @desc    update todo complete
-// @route   POST /api/todo/complete/:id
-// @access  private
-const updateCompleted = async (req, res) => {
-  try {
-    const { done } = req.body;
-    const todoItem = await Todo.findById(req.params.id);
-    todoItem.todo = todoItem.todo;
-    todoItem.date = todoItem.date;
-    todoItem.done = done;
+    todoItem.dueDate = dueDate;
+    todoItem.status = status;
     await todoItem.save();
     res.status(201).json(todoItem);
   } catch (err) {
@@ -131,7 +64,7 @@ const updateCompleted = async (req, res) => {
 // @access  private
 const deleteTodo = async (req, res) => {
   try {
-    const { id } = req.body;
+    const id = req.params.id;
     const todoItem = await Todo.findByIdAndDelete(id);
     res.status(200).json("Todo deleted successfully");
   } catch (error) {
@@ -141,12 +74,9 @@ const deleteTodo = async (req, res) => {
 };
 
 module.exports = {
-  getTodoToday,
-  getTodoRemaining,
-  getTodoByDone,
+  getAllTodo,
   getTodoByID,
   addTodo,
-  updateCompleted,
   updateTodo,
   deleteTodo,
 };

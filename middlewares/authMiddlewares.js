@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/loginModel");
+const Employee = require("../models/employeeModel");
 require('dotenv').config();
 
 
@@ -15,8 +16,15 @@ const protect = async (req, res, next) => {
       token = req.headers.authorization.split(" ")[1];
       // Verfiy token
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
       // Get user from the token
-      req.user = await User.findById(decoded.id)
+      if (decoded?.role == "user") {
+        req.user = await User.findById(decoded.id);
+      } else {
+        req.user = await Employee.findById(decoded.id);
+      }
+
+      if (req.user) req.user.role = decoded?.role
 
       next();
     } catch (error) {
