@@ -1,24 +1,18 @@
 const express = require("express");
 const router = express.Router();
 const {
-  getTodoToday,
-  getTodoRemaining,
-  getTodoByDone,
+  getAllTodo,
   getTodoByID,
   addTodo,
-  updateCompleted,
   updateTodo,
   deleteTodo,
 } = require("../controllers/todoControllers");
 const { protect } = require("../middlewares/authMiddlewares");
 
-router.get("/today", protect, getTodoToday);
-router.get("/remaining", protect, getTodoRemaining);
-router.get("/done", protect, getTodoByDone);
+router.get("/", protect, getAllTodo);
 router.get("/:id", protect, getTodoByID);
-router.post("/add", protect, addTodo);
-router.post("/complete/:id", protect, updateCompleted);
-router.post("/update/:id", protect, updateTodo);
-router.post("/delete", deleteTodo);
+router.post("/", protect, addTodo);
+router.post("/:id", protect, updateTodo);
+router.delete("/:id", deleteTodo);
 
 module.exports = router;

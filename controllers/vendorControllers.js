@@ -65,9 +65,9 @@ const deleteVendor = async (req, res) => {
 };
 
 module.exports = {
-    getVendorByAscending,
-    getVendorbyID,
-    addVendor,
-    updateVendor,
-    deleteVendor
+  getVendorByAscending,
+  getVendorbyID,
+  addVendor,
+  updateVendor,
+  deleteVendor
 };
