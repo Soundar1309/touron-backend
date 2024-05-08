@@ -4,8 +4,8 @@ require("dotenv").config();
 const connectDB = require("./config/db");
 
 const corsObj = {
-  origin: '*',
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  origin: "*",
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   preflightContinue: false,
   optionsSuccessStatus: 200,
 };
@@ -35,6 +35,7 @@ app.use("/api/request", require("./routes/requestRoutes"));
 app.use("/api/bookingb2b", require("./routes/bookingb2bRoutes"));
 app.use("/api/bookingb2c", require("./routes/bookingb2cRoutes"));
 app.use("/api/todo", require("./routes/todoRoutes"));
+app.use("/api/destination", require("./routes/destinationRoutes"));
 
 app.listen(process.env.PORT || 4000, () => {
   console.log(`Server is running on port ${process.env.PORT}`);

@@ -21,7 +21,6 @@ const getCitybyID = async (req, res) => {
   }
 };
 
-
 // @desc    get all internationalcity by countryName
 // @route   GET /api/internationalcity/state
 // @access  public
@@ -32,7 +31,9 @@ const getCityByAscendingByCountry = async (req, res) => {
       return res.status(400).json({ error: "Country name is required" });
     }
 
-    const cities = await City.find({ countryName: countryName }).sort({ name: 1 });
+    const cities = await City.find({ countryName: countryName }).sort({
+      name: 1,
+    });
     if (cities.length === 0) {
       return res
         .status(404)
@@ -51,6 +52,7 @@ const getCityByAscendingByCountry = async (req, res) => {
 const addCity = async (req, res) => {
   const {
     countryName,
+    continentName,
     cityName,
     aboutCity,
     imageUrl,
@@ -70,14 +72,13 @@ const addCity = async (req, res) => {
 
   const state = await City.create({
     countryName,
+    continentName,
     cityName,
     aboutCity,
     imageUrl,
     weather,
-    coordinates: {
-      latitude,
-      longitude,
-    },
+    latitude,
+    longitude,
     travelDuration,
     idealDays,
     famousPlacesToVisit,
@@ -99,6 +100,7 @@ const updateCity = async (req, res) => {
   try {
     const {
       countryName,
+      continentName,
       cityName,
       aboutCity,
       imageUrl,
@@ -118,14 +120,13 @@ const updateCity = async (req, res) => {
     const city = await City.findById(req.params.id);
 
     city.countryName = countryName;
+    city.continentName = continentName;
     city.cityName = cityName;
     city.aboutCity = aboutCity;
     city.imageUrl = imageUrl;
     city.weather = weather;
-    city.coordinates = {
-      latitude,
-      longitude,
-    };
+    city.latitude = latitude;
+    city.longitude = longitude;
     city.travelDuration = travelDuration;
     city.idealDays = idealDays;
     city.famousPlacesToVisit = famousPlacesToVisit;
@@ -159,7 +160,7 @@ const deleteCity = async (req, res) => {
 module.exports = {
   getCityByAscending,
   getCitybyID,
- getCityByAscendingByCountry,
+  getCityByAscendingByCountry,
   addCity,
   updateCity,
   deleteCity,

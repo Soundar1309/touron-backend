@@ -6,6 +6,10 @@ const internationalCitySchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    continentName: {
+      type: String,
+      required: true,
+    },
     cityName: {
       type: String,
       required: true,
@@ -13,10 +17,8 @@ const internationalCitySchema = new mongoose.Schema(
     aboutCity: String,
     imageUrl: String,
     weather: String,
-    coordinates: {
-      latitude: String,
-      longitude: String,
-    },
+    latitude: String,
+    longitude: String,
     travelDuration: {
       type: String,
       required: true,
