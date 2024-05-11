@@ -52,7 +52,6 @@ const getCityByAscendingByCountry = async (req, res) => {
 const addCity = async (req, res) => {
   const {
     countryName,
-    continentName,
     cityName,
     aboutCity,
     imageUrl,
@@ -72,7 +71,6 @@ const addCity = async (req, res) => {
 
   const state = await City.create({
     countryName,
-    continentName,
     cityName,
     aboutCity,
     imageUrl,
@@ -100,7 +98,6 @@ const updateCity = async (req, res) => {
   try {
     const {
       countryName,
-      continentName,
       cityName,
       aboutCity,
       imageUrl,
@@ -120,7 +117,6 @@ const updateCity = async (req, res) => {
     const city = await City.findById(req.params.id);
 
     city.countryName = countryName;
-    city.continentName = continentName;
     city.cityName = cityName;
     city.aboutCity = aboutCity;
     city.imageUrl = imageUrl;

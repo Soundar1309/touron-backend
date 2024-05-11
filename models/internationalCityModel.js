@@ -6,10 +6,6 @@ const internationalCitySchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    continentName: {
-      type: String,
-      required: true,
-    },
     cityName: {
       type: String,
       required: true,
