@@ -12,7 +12,9 @@ const getAllCountry = async (req, res) => {
 // @route   GET /api/country/
 // @access  public
 const getAllCountryAutocomplete = async (req, res) => {
-  const country = await Country.find().select({ countryName: 1, }).sort({ countryName: 1 });
+  const country = await Country.find()
+    .select({ countryName: 1 })
+    .sort({ countryName: 1 });
   res.json(country);
 };
 
@@ -70,6 +72,7 @@ const addCountry = async (req, res) => {
     timeZone,
     bestTimeToVisit,
     countryName,
+    continentName,
     aboutCountry,
     idealDays,
     imageUrl,
@@ -82,20 +85,26 @@ const addCountry = async (req, res) => {
   } = req.body;
 
   const country = await Country.create({
-    general: {
-      currency,
-      timeZone,
-      bestTimeToVisit,
-    },
+    // general: {
+    //   currency,
+    //   timeZone,
+    //   bestTimeToVisit,
+    // },
+    currency,
+    timeZone,
+    bestTimeToVisit,
     countryName,
+    continentName,
     aboutCountry,
     idealDays,
     imageUrl,
     weather,
-    visa: {
-      onArrival,
-      cost,
-    },
+    // visa: {
+    //   onArrival,
+    //   cost,
+    // },
+    onArrival,
+    cost,
     bestPlaces,
     countryFlagImage,
     category,
@@ -114,6 +123,7 @@ const updateCountry = async (req, res) => {
       timeZone,
       bestTimeToVisit,
       countryName,
+      continentName,
       aboutCountry,
       idealDays,
       imageUrl,
@@ -126,19 +136,21 @@ const updateCountry = async (req, res) => {
     } = req.body;
     const country = await Country.findById(req.params.id);
 
-    const bestTimeToVisitArray = country.general.bestTimeToVisit;
-    bestTimeToVisitArray.push(bestTimeToVisit);
+    // const bestTimeToVisitArray = country.bestTimeToVisit;
+    // bestTimeToVisitArray.push(bestTimeToVisit);
 
-    country.general.currency = currency;
-    country.general.timeZone = timeZone;
-    country.general.bestTimeToVisit = bestTimeToVisitArray;
+    country.currency = currency;
+    country.timeZone = timeZone;
+    // country.bestTimeToVisit = bestTimeToVisitArray;
+    country.bestTimeToVisit = bestTimeToVisit;
     country.countryName = countryName;
+    country.continentName = continentName;
     country.aboutCountry = aboutCountry;
     country.idealDays = idealDays;
     country.imageUrl = imageUrl;
     country.weather = weather;
-    country.visa.onArrival = onArrival;
-    country.visa.cost = cost;
+    country.onArrival = onArrival;
+    country.cost = cost;
     country.bestPlaces = bestPlaces;
     country.countryFlagImage = countryFlagImage;
     country.category = category;

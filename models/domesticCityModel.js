@@ -2,10 +2,6 @@ const mongoose = require("mongoose");
 
 const domesticCitySchema = new mongoose.Schema(
   {
-    countryName: {
-      type: String,
-      required: true,
-    },
     suggestedCombinations: String,
     stateName: {
       type: String,
@@ -18,10 +14,8 @@ const domesticCitySchema = new mongoose.Schema(
     aboutCity: String,
     imageUrl: String,
     weather: String,
-    coordinates: {
-      latitude: String,
-      longitude: String,
-    },
+    latitude: String,
+    longitude: String,
     travelDuration: {
       type: String,
       required: true,

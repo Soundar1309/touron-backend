@@ -58,7 +58,6 @@ const getCitybyID = async (req, res) => {
 // @access  private
 const addCity = async (req, res) => {
   const {
-    countryName,
     suggestedCombinations,
     stateName,
     cityName,
@@ -75,17 +74,14 @@ const addCity = async (req, res) => {
   } = req.body;
 
   const state = await City.create({
-    countryName,
     suggestedCombinations,
     stateName,
     cityName,
     aboutCity,
     imageUrl,
     weather,
-    coordinates: {
-      latitude,
-      longitude,
-    },
+    latitude,
+    longitude,
     travelDuration,
     idealDays,
     famousPlacesToVisit,
@@ -102,7 +98,6 @@ const addCity = async (req, res) => {
 const updateCity = async (req, res) => {
   try {
     const {
-      countryName,
       suggestedCombinations,
       stateName,
       cityName,
@@ -119,17 +114,14 @@ const updateCity = async (req, res) => {
     } = req.body;
     const city = await City.findById(req.params.id);
 
-    city.countryName = countryName;
     city.suggestedCombinations = suggestedCombinations;
     city.stateName = stateName;
     city.cityName = cityName;
     city.aboutCity = aboutCity;
     city.imageUrl = imageUrl;
     city.weather = weather;
-    city.coordinates = {
-      latitude,
-      longitude,
-    };
+    city.latitude = latitude;
+    city.longitude = longitude;
     city.travelDuration = travelDuration;
     city.idealDays = idealDays;
     city.famousPlacesToVisit = famousPlacesToVisit;
