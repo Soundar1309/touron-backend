@@ -23,8 +23,6 @@ const addBooking = async (req, res) => {
     status,
   } = req.body;
 
-  console.log(new Date(dateOfPlanning), new Date(dateOfBooking));
-
   const booking = await Booking.create({
     userId,
     userName,
