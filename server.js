@@ -36,6 +36,8 @@ app.use("/api/bookingb2b", require("./routes/bookingb2bRoutes"));
 app.use("/api/bookingb2c", require("./routes/bookingb2cRoutes"));
 app.use("/api/todo", require("./routes/todoRoutes"));
 app.use("/api/destination", require("./routes/destinationRoutes"));
+app.use("/api/booking", require("./routes/bookingRoutes"));
+app.use("/api/booktour", require("./routes/bookTourRoutes"));
 
 app.listen(process.env.PORT || 4000, () => {
   console.log(`Server is running on port ${process.env.PORT}`);
