@@ -114,9 +114,53 @@ const getBookingbyID = async (req, res) => {
     throw new Error("Booking not found");
   }
 };
+
+const updateAssignedTo = async (req, res) => {
+  const { id } = req.params;
+  const { assignedTo } = req.body;
+
+  try {
+    const booking = await Booking.findById(id);
+
+    if (!booking) {
+      return res.status(404).json({ message: "Booking not found" });
+    }
+
+    booking.assignedTo = assignedTo;
+    await booking.save();
+
+    res
+      .status(200)
+      .json({ message: "AssignedTo updated successfully", booking });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error });
+  }
+};
+
+const updateStatus = async (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+
+  try {
+    const booking = await Booking.findById(id);
+
+    if (!booking) {
+      return res.status(404).json({ message: "Booking not found" });
+    }
+
+    booking.status = status;
+    await booking.save();
+
+    res.status(200).json({ message: "status updated successfully", booking });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error });
+  }
+};
 module.exports = {
   addBooking,
   geAllBooking,
   getBookingbyID,
   updateBooking,
+  updateAssignedTo,
+  updateStatus,
 };
