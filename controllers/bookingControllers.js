@@ -6,11 +6,10 @@ const Booking = require("../models/bookingModel");
 const addBooking = async (req, res) => {
   const {
     userId,
-    userName,
     mobileNumber,
     dateOfPlanning,
     dateOfBooking,
-    destinationType,
+    tourType,
     destination,
     accompany,
     adult,
@@ -25,11 +24,10 @@ const addBooking = async (req, res) => {
 
   const booking = await Booking.create({
     userId,
-    userName,
     mobileNumber,
     dateOfPlanning: new Date(dateOfPlanning),
     dateOfBooking: new Date(dateOfBooking),
-    destinationType,
+    tourType,
     destination,
     accompany,
     adult,
@@ -52,11 +50,10 @@ const updateBooking = async (req, res) => {
   try {
     const {
       userId,
-      userName,
       mobileNumber,
       dateOfPlanning,
       dateOfBooking,
-      destinationType,
+      tourType,
       destination,
       accompany,
       adult,
@@ -71,11 +68,10 @@ const updateBooking = async (req, res) => {
     const booking = await Booking.findById(req.params.id);
 
     booking.userId = userId;
-    booking.userName = userName;
     booking.mobileNumber = mobileNumber;
     booking.dateOfPlanning = new Date(dateOfPlanning);
     booking.dateOfBooking = new Date(dateOfBooking);
-    booking.destinationType = destinationType;
+    booking.tourType = tourType;
     booking.destination = destination;
     booking.accompany = accompany;
     booking.adult = adult;
