@@ -8,11 +8,13 @@ const bookTourSchema = mongoose.Schema(
     date: {
       type: Date,
       required: true,
-      set: (value) => moment(value, "DD/MM/YYYY").toDate(), // Parse the date
     },
+    travelType: String,
     destination: String,
     adult: Number,
     child: Number,
+    assignedTo: String,
+    status: String,
   },
   {
     timestamps: true,

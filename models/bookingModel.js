@@ -4,7 +4,6 @@ const mongoose = require("mongoose");
 const bookingSchema = mongoose.Schema(
   {
     userId: String,
-    userName: String,
     mobileNumber: String,
     dateOfPlanning: {
       type: Date,
@@ -14,7 +13,7 @@ const bookingSchema = mongoose.Schema(
       type: Date,
       required: true,
     },
-    destinationType: String,
+    tourType: String,
     destination: String,
     accompany: String,
     adult: Number,
@@ -23,7 +22,7 @@ const bookingSchema = mongoose.Schema(
     travelStyle: [String],
     budget: Number,
     adventure: Boolean,
-    assignedTo: [String],
+    assignedTo: String,
     status: String,
   },
   {
