@@ -1,4 +1,3 @@
-const moment = require("moment");
 const mongoose = require("mongoose");
 
 const bookingSchema = mongoose.Schema(
@@ -14,6 +13,7 @@ const bookingSchema = mongoose.Schema(
       required: true,
     },
     tourType: String,
+    category: String,
     destination: String,
     accompany: String,
     adult: Number,
