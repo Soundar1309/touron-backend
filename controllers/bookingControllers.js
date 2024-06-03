@@ -97,16 +97,6 @@ const updateBooking = async (req, res) => {
 // @desc    get booking
 // @route   GET /api/booking/
 // @access  public
-// const getAllBooking = async (req, res) => {
-//   const category = req.query.category;
-//   let bookings = null;
-//   if (category === "All") {
-//     bookings = await Booking.find({}).sort({ createdAt: -1 });
-//   } else {
-//     bookings = await Booking.find({ category }).sort({ createdAt: -1 });
-//   }
-//   res.json(bookings);
-// };
 const getAllBooking = async (req, res) => {
   const category = req.query.category;
   const page = parseInt(req.query.page) || 1;
