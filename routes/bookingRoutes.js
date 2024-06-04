@@ -2,14 +2,14 @@ const express = require("express");
 const router = express.Router();
 const {
   addBooking,
-  geAllBooking,
+  getAllBooking,
   getBookingbyID,
   updateBooking,
   updateAssignedTo,
   updateStatus,
 } = require("../controllers/bookingControllers");
 
-router.get("/", geAllBooking);
+router.get("/", getAllBooking);
 router.get("/:id", getBookingbyID);
 router.post("/", addBooking);
 router.post("/:id", updateBooking);

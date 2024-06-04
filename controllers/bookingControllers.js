@@ -9,6 +9,7 @@ const addBooking = async (req, res) => {
     mobileNumber,
     dateOfPlanning,
     dateOfBooking,
+    category,
     tourType,
     destination,
     accompany,
@@ -28,6 +29,7 @@ const addBooking = async (req, res) => {
     dateOfPlanning: new Date(dateOfPlanning),
     dateOfBooking: new Date(dateOfBooking),
     tourType,
+    category,
     destination,
     accompany,
     adult,
@@ -53,6 +55,7 @@ const updateBooking = async (req, res) => {
       mobileNumber,
       dateOfPlanning,
       dateOfBooking,
+      category,
       tourType,
       destination,
       accompany,
@@ -71,6 +74,7 @@ const updateBooking = async (req, res) => {
     booking.mobileNumber = mobileNumber;
     booking.dateOfPlanning = new Date(dateOfPlanning);
     booking.dateOfBooking = new Date(dateOfBooking);
+    booking.category = category;
     booking.tourType = tourType;
     booking.destination = destination;
     booking.accompany = accompany;
@@ -93,9 +97,36 @@ const updateBooking = async (req, res) => {
 // @desc    get booking
 // @route   GET /api/booking/
 // @access  public
-const geAllBooking = async (req, res) => {
-  const bookings = await Booking.find({}).sort({ createdAt: -1 });
-  res.json(bookings);
+const getAllBooking = async (req, res) => {
+  const category = req.query.category;
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+
+  const skip = (page - 1) * limit;
+
+  let bookings = null;
+  if (category === "All") {
+    bookings = await Booking.find({})
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+  } else {
+    bookings = await Booking.find({ category })
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+  }
+
+  const totalRecords = await Booking.countDocuments(
+    category === "All" ? {} : { category }
+  );
+
+  res.json({
+    totalRecords,
+    page,
+    limit,
+    bookings,
+  });
 };
 
 // @desc    get booking by id
@@ -154,7 +185,7 @@ const updateStatus = async (req, res) => {
 };
 module.exports = {
   addBooking,
-  geAllBooking,
+  getAllBooking,
   getBookingbyID,
   updateBooking,
   updateAssignedTo,
