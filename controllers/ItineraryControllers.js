@@ -7,7 +7,7 @@ const cloudinary = require("../config/cloudinary");
 const getItineraries = async (req, res) => {
   const itinery = await ItineryDetails.find().select({
     country: 1,
-    stateName: 1,
+    state: 1,
     title: 1,
     price: 1,
     destination: 1,
@@ -55,7 +55,7 @@ const addItinerary = async (req, res) => {
   try {
     const {
       country,
-      stateName,
+      state,
       title,
       price,
       destination,
@@ -78,7 +78,7 @@ const addItinerary = async (req, res) => {
 
     const itinery = await ItineryDetails.create({
       country,
-      stateName,
+      state,
       title,
       price,
       destination,
@@ -111,7 +111,7 @@ const updateItinerary = async (req, res) => {
   try {
     const {
       country,
-      stateName,
+      state,
       title,
       price,
       destination,
@@ -145,7 +145,7 @@ const updateItinerary = async (req, res) => {
       req.params.id,
       {
         country,
-        stateName,
+        state,
         title,
         price,
         destination,

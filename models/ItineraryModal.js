@@ -20,7 +20,7 @@ const ItineraryDetailSchema = mongoose.Schema(
     country: {
       type: String,
     },
-    stateName: {
+    state: {
       type: String,
     },
     title: {
