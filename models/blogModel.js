@@ -9,16 +9,18 @@ const sectionSchema = new mongoose.Schema({
 const blogSchema = mongoose.Schema(
   {
     countryName: String,
+    stateName: String,
     cities: [String],
     keywords: [String],
     title: String,
+    tourType: String,
     image: String,
     content: String,
     sections: {
       type: [sectionSchema],
     },
     categories: [String],
-    comments: [String]
+    comments: [String],
   },
   {
     timestamps: true,
