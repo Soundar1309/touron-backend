@@ -110,6 +110,10 @@ const getAllBooking = async (req, res) => {
     requestPayload.category = category;
   }
 
+  if (req.query.userId) {
+    requestPayload.userId = req.query.userId;
+  }
+
   if (req.query.assignedTo) {
     requestPayload.assignedTo = req.query.assignedTo;
   }
