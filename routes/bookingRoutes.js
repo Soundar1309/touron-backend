@@ -15,7 +15,7 @@ router.get("/:id", getBookingbyID);
 router.post("/", addBooking);
 router.post("/:id", updateBooking);
 router.post("/assignedto/:id", updateAssignedTo);
-router.get("/requeststatistics/:id", getStatusCountForUser);
+router.get("/requeststatistics/:userId", getStatusCountForUser);
 router.post("/status/:id", updateStatus);
 
 module.exports = router;

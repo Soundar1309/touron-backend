@@ -192,7 +192,7 @@ const getStatusCountForUser = async (req, res) => {
   const { userId } = req.params;
 
   const pipeline = [
-    { $match: { user_id: userId } },
+    { $match: { userId: userId } },
     { $group: { _id: "$status", count: { $sum: 1 } } },
   ];
 
