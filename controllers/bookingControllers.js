@@ -1,4 +1,5 @@
 const Booking = require("../models/bookingModel");
+const Employee = require("../models/employeeModel");
 
 // @desc    add booking
 // @route   POST /api/booking/add
@@ -45,8 +46,8 @@ const addBooking = async (req, res) => {
   res.status(201).json(booking);
 };
 
-// @desc    update internationalcity
-// @route   POST /api/internationalcity/update/:id
+// @desc    update booking
+// @route   POST /api/booking/update/:id
 // @access  private
 const updateBooking = async (req, res) => {
   try {
@@ -104,22 +105,25 @@ const getAllBooking = async (req, res) => {
 
   const skip = (page - 1) * limit;
 
-  let bookings = null;
-  if (category === "All") {
-    bookings = await Booking.find({})
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limit);
-  } else {
-    bookings = await Booking.find({ category })
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limit);
+  let requestPayload = {};
+  if (category && category !== "All") {
+    requestPayload.category = category;
   }
 
-  const totalRecords = await Booking.countDocuments(
-    category === "All" ? {} : { category }
-  );
+  if (req.query.userId) {
+    requestPayload.userId = req.query.userId;
+  }
+
+  if (req.query.assignedTo) {
+    requestPayload.assignedTo = req.query.assignedTo;
+  }
+
+  const bookings = await Booking.find(requestPayload)
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(limit);
+
+  const totalRecords = await Booking.countDocuments(requestPayload);
 
   res.json({
     totalRecords,

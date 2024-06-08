@@ -20,6 +20,9 @@ const ItineraryDetailSchema = mongoose.Schema(
     country: {
       type: String,
     },
+    state: {
+      type: String,
+    },
     title: {
       type: String,
     },
@@ -35,18 +38,21 @@ const ItineraryDetailSchema = mongoose.Schema(
     hotel: {
       type: String,
     },
+    tourType: {
+      type: String,
+    },
     meals: {
       type: String,
     },
     image: {
       public_id: {
         type: String,
-        required: true
+        required: true,
       },
       url: {
         type: String,
-        required: true
-      }
+        required: true,
+      },
     },
     description: {
       type: String,
@@ -58,14 +64,18 @@ const ItineraryDetailSchema = mongoose.Schema(
       type: String,
     },
     included: {
-      type: [{
-        type: String
-      }],
+      type: [
+        {
+          type: String,
+        },
+      ],
     },
     excluded: {
-      type: [{
-        type: String
-      }],
+      type: [
+        {
+          type: String,
+        },
+      ],
     },
     days: {
       type: [daysSchema],

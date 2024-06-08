@@ -43,6 +43,7 @@ const getBlogbyID = async (req, res) => {
 const addBlog = async (req, res) => {
   const {
     countryName,
+    stateName,
     cities,
     keywords,
     title,
@@ -50,11 +51,13 @@ const addBlog = async (req, res) => {
     content,
     sections,
     categories,
-    comments
+    comments,
+    tourType,
   } = req.body;
 
   const blog = await Blog.create({
     countryName,
+    stateName,
     cities,
     keywords,
     title,
@@ -62,9 +65,10 @@ const addBlog = async (req, res) => {
     content,
     sections,
     categories,
-    comments
+    comments,
+    tourType,
   });
-  await blog.save()
+  await blog.save();
   res.status(201).json(blog);
 };
 
@@ -75,6 +79,7 @@ const updateBlog = async (req, res) => {
   try {
     const {
       countryName,
+      stateName,
       cities,
       keywords,
       title,
@@ -82,24 +87,27 @@ const updateBlog = async (req, res) => {
       content,
       sections,
       categories,
-      comments
+      comments,
+      tourType,
     } = req.body;
     const blog = await Blog.findById(req.params.id);
     blog.countryName = countryName;
+    blog.stateName = stateName;
     blog.cityName = cities;
     blog.keywords = keywords;
     blog.title = title;
     blog.image = image;
     blog.content = content;
     blog.sections = sections;
-    blog.categories = categories
-    blog.comments = comments
+    blog.categories = categories;
+    blog.comments = comments;
+    blog.tourType = tourType;
     await blog.save();
     res.status(200).json(blog);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
-}
+};
 
 // @desc    add comment to blog
 // @route   POST /api/blogs/updatecomment/:id
@@ -144,5 +152,5 @@ module.exports = {
   addBlog,
   updateComment,
   updateBlog,
-  deleteBlog
+  deleteBlog,
 };

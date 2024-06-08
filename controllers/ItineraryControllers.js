@@ -5,7 +5,21 @@ const cloudinary = require("../config/cloudinary");
 // @route   GET /api/itinerary/
 // @access  public
 const getItineraries = async (req, res) => {
-  const itinery = await ItineryDetails.find().select({ country: 1, title: 1, price: 1, destination: 1, duration: 1, hotel: 1, meals: 1, image: 1, description: 1, topHighlights: 1, });
+  const itinery = await ItineryDetails.find().select({
+    country: 1,
+    state: 1,
+    title: 1,
+    price: 1,
+    destination: 1,
+    duration: 1,
+    hotel: 1,
+    meals: 1,
+    image: 1,
+    description: 1,
+    topHighlights: 1,
+    tourType: 1,
+    topHighlights: 1,
+  });
   res.json(itinery);
 };
 
@@ -41,12 +55,14 @@ const addItinerary = async (req, res) => {
   try {
     const {
       country,
+      state,
       title,
       price,
       destination,
       duration,
       hotel,
       meals,
+      tourType,
       image,
       description,
       topHighlights,
@@ -62,11 +78,13 @@ const addItinerary = async (req, res) => {
 
     const itinery = await ItineryDetails.create({
       country,
+      state,
       title,
       price,
       destination,
       duration,
       hotel,
+      tourType,
       meals,
       image: {
         public_id: imageResult.public_id,
@@ -93,6 +111,7 @@ const updateItinerary = async (req, res) => {
   try {
     const {
       country,
+      state,
       title,
       price,
       destination,
@@ -105,6 +124,7 @@ const updateItinerary = async (req, res) => {
       tourPlanDescription,
       included,
       excluded,
+      tourType,
       days,
     } = req.body;
 
@@ -116,29 +136,37 @@ const updateItinerary = async (req, res) => {
       imageData = {
         public_id: imageResult.public_id,
         url: imageResult.secure_url,
-      }
+      };
     } else {
       imageData = image;
     }
 
-    const itinerary = await ItineryDetails.findByIdAndUpdate(req.params.id, {
-      country,
-      title,
-      price,
-      destination,
-      duration,
-      hotel,
-      meals,
-      image: imageData,
-      description,
-      topHighlights,
-      tourPlanDescription,
-      included,
-      excluded,
-      days,
-    }, { new: true });
+    const itinerary = await ItineryDetails.findByIdAndUpdate(
+      req.params.id,
+      {
+        country,
+        state,
+        title,
+        price,
+        destination,
+        duration,
+        hotel,
+        meals,
+        tourType,
+        image: imageData,
+        description,
+        topHighlights,
+        tourPlanDescription,
+        included,
+        excluded,
+        days,
+      },
+      { new: true }
+    );
     await itinerary.save();
-    res.status(200).json({ ...itinerary._doc, message: "Updated Successfully" });
+    res
+      .status(200)
+      .json({ ...itinerary._doc, message: "Updated Successfully" });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -149,12 +177,16 @@ const updateItinerary = async (req, res) => {
 // @access  private
 const updateItineraryFaq = async (req, res) => {
   try {
-    const {
-      faq
-    } = req.body;
-    const itinerary = await ItineryDetails.findByIdAndUpdate(req.params.id, { faq }, { new: true });
+    const { faq } = req.body;
+    const itinerary = await ItineryDetails.findByIdAndUpdate(
+      req.params.id,
+      { faq },
+      { new: true }
+    );
     await itinerary.save();
-    res.status(200).json({ ...itinerary._doc, message: "Updated Successfully" });
+    res
+      .status(200)
+      .json({ ...itinerary._doc, message: "Updated Successfully" });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -165,12 +197,16 @@ const updateItineraryFaq = async (req, res) => {
 // @access  private
 const updateItineraryReview = async (req, res) => {
   try {
-    const {
-      review
-    } = req.body;
-    const itinerary = await ItineryDetails.findByIdAndUpdate(req.params.id, { review }, { new: true });
+    const { review } = req.body;
+    const itinerary = await ItineryDetails.findByIdAndUpdate(
+      req.params.id,
+      { review },
+      { new: true }
+    );
     await itinerary.save();
-    res.status(200).json({ ...itinerary._doc, message: "Updated Successfully" });
+    res
+      .status(200)
+      .json({ ...itinerary._doc, message: "Updated Successfully" });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -183,5 +219,5 @@ module.exports = {
   addItinerary,
   updateItinerary,
   updateItineraryReview,
-  updateItineraryFaq
+  updateItineraryFaq,
 };

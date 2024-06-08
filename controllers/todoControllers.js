@@ -5,7 +5,9 @@ const Todo = require("../models/todoModel");
 // @access  public
 const getAllTodo = async (req, res) => {
   try {
-    const todos = await Todo.find({ user: req.user?._id, }).sort({ createdAt: -1 });
+    const todos = await Todo.find({ user: req.user?._id }).sort({
+      createdAt: -1,
+    });
 
     res.json(todos);
   } catch (error) {
@@ -31,7 +33,7 @@ const getTodoByID = async (req, res) => {
 // @access  private
 const addTodo = async (req, res) => {
   const { todo, status, dueDate } = req.body;
-  console.log(todo, status, dueDate);
+
   const todoItem = await Todo.create({
     todo,
     dueDate,
