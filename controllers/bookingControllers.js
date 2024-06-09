@@ -187,6 +187,23 @@ const updateStatus = async (req, res) => {
     res.status(500).json({ message: "Server error", error });
   }
 };
+
+const getStatusCountForUser = async (req, res) => {
+  const { userId } = req.params;
+
+  const pipeline = [
+    { $match: { userId: userId } },
+    { $group: { _id: "$status", count: { $sum: 1 } } },
+  ];
+
+  try {
+    const results = await Booking.aggregate(pipeline);
+    res.status(200).json(results);
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error });
+  }
+};
+
 module.exports = {
   addBooking,
   getAllBooking,
@@ -194,4 +211,5 @@ module.exports = {
   updateBooking,
   updateAssignedTo,
   updateStatus,
+  getStatusCountForUser,
 };
