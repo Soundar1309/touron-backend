@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const Booking = require("../models/bookingModel");
 const Employee = require("../models/employeeModel");
 
@@ -25,7 +26,7 @@ const addBooking = async (req, res) => {
   } = req.body;
 
   const booking = await Booking.create({
-    userId,
+    userId: mongoose.Types.ObjectId(userId),
     mobileNumber,
     dateOfPlanning: new Date(dateOfPlanning),
     dateOfBooking: new Date(dateOfBooking),
@@ -71,7 +72,7 @@ const updateBooking = async (req, res) => {
     } = req.body;
     const booking = await Booking.findById(req.params.id);
 
-    booking.userId = userId;
+    booking.userId = mongoose.Types.ObjectId(userId);
     booking.mobileNumber = mobileNumber;
     booking.dateOfPlanning = new Date(dateOfPlanning);
     booking.dateOfBooking = new Date(dateOfBooking);
@@ -118,10 +119,33 @@ const getAllBooking = async (req, res) => {
     requestPayload.assignedTo = req.query.assignedTo;
   }
 
-  const bookings = await Booking.find(requestPayload)
-    .sort({ createdAt: -1 })
-    .skip(skip)
-    .limit(limit);
+  const pipeline = [
+    {
+      $match: requestPayload // Replace with your query criteria
+    },
+    {
+      $sort: { createdAt: -1 } // Sort by orderDate in descending order
+    },
+    {
+      $skip: skip // Skip the first 10 documents
+    },
+    {
+      $limit: limit // Limit to 5 documents
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "userId",
+        foreignField: "_id",
+        as: "userDetails"
+      }
+    },
+    {
+      $unwind: "$userDetails"
+    }
+  ];
+
+  const bookings = await Booking.aggregate(pipeline);
 
   const totalRecords = await Booking.countDocuments(requestPayload);
 
@@ -137,9 +161,29 @@ const getAllBooking = async (req, res) => {
 // @route   GET /api/booking/:id
 // @access  public
 const getBookingbyID = async (req, res) => {
-  const booking = await Booking.findById(req.params.id);
-  if (booking) {
-    res.json(booking);
+  const objectId = new mongoose.Types.ObjectId(req.params.id);
+
+  const pipeline = [
+    {
+      $match: { _id: objectId } // Replace with your query criteria
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "userId",
+        foreignField: "_id",
+        as: "userDetails"
+      }
+    },
+    {
+      $unwind: "$userDetails"
+    }
+  ];
+
+  const booking = await Booking.aggregate(pipeline);
+
+  if (booking.length > 0) {
+    res.json(booking[0]);
   } else {
     res.status(404);
     throw new Error("Booking not found");

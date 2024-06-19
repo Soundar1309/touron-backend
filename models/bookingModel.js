@@ -1,8 +1,9 @@
 const mongoose = require("mongoose");
+const { Schema } = mongoose;
 
 const bookingSchema = mongoose.Schema(
   {
-    userId: String,
+    userId: { type: Schema.Types.ObjectId, ref: 'User' },
     mobileNumber: String,
     dateOfPlanning: {
       type: Date,
