@@ -26,7 +26,7 @@ const addBooking = async (req, res) => {
   } = req.body;
 
   const booking = await Booking.create({
-    userId: mongoose.Types.ObjectId(userId),
+    userId: new mongoose.Types.ObjectId(userId),
     mobileNumber,
     dateOfPlanning: new Date(dateOfPlanning),
     dateOfBooking: new Date(dateOfBooking),
@@ -72,7 +72,7 @@ const updateBooking = async (req, res) => {
     } = req.body;
     const booking = await Booking.findById(req.params.id);
 
-    booking.userId = mongoose.Types.ObjectId(userId);
+    booking.userId = new mongoose.Types.ObjectId(userId);
     booking.mobileNumber = mobileNumber;
     booking.dateOfPlanning = new Date(dateOfPlanning);
     booking.dateOfBooking = new Date(dateOfBooking);
