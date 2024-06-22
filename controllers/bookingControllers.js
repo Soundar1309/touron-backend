@@ -112,7 +112,7 @@ const getAllBooking = async (req, res) => {
   }
 
   if (req.query.userId) {
-    requestPayload.userId = req.query.userId;
+    requestPayload.userId = new mongoose.Types.ObjectId(req.query.userId);
   }
 
   if (req.query.assignedTo) {
@@ -236,7 +236,7 @@ const getStatusCountForUser = async (req, res) => {
   const { userId } = req.params;
 
   const pipeline = [
-    { $match: { userId: userId } },
+    { $match: { userId: new mongoose.Types.ObjectId(userId) } },
     { $group: { _id: "$status", count: { $sum: 1 } } },
   ];
 
