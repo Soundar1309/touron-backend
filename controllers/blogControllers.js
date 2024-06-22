@@ -3,9 +3,26 @@ const Blog = require("../models/blogModel");
 // @desc    get all blogs
 // @route   GET /api/blogs/getblogs
 // @access  public
+
 const getBlogs = async (req, res) => {
-  const blogs = await Blog.find({});
-  res.json(blogs);
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+
+  const skip = (page - 1) * limit;
+
+  const blogs = await Blog.find({}).select({ countryName: 1, stateName: 1, title: 1, keywords: 1, content: 1, image: 1, tourType: 1 })
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(limit);
+
+  const totalRecords = await Blog.countDocuments({});
+
+  res.json({
+    totalRecords,
+    page,
+    limit,
+    blogs,
+  });
 };
 
 // @desc    get limited blogs
