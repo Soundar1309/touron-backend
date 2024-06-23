@@ -6,7 +6,7 @@ const sectionSchema = new mongoose.Schema({
   content: { type: String },
 });
 
-const blogSchema = mongoose.Schema(
+const blogSchema = new mongoose.Schema(
   {
     countryName: String,
     stateName: String,
