@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const CountrySchema = mongoose.Schema(
+const CountrySchema = new mongoose.Schema(
   {
     currency: String,
     timeZone: String,
